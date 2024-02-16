@@ -3,26 +3,28 @@
 namespace CraftFieldConnector\Enums;
 enum FieldType: string
 {
+    case UnKnown = 'unknown';
     case PlainText = 'plainText';
     case MatrixBlock = 'matrixBlock';
     case Color = 'color';
+    case Assets = 'assets';
+    case Int = 'int';
+    case Entries = 'entries';
+    case LightSwitch = 'lightSwitch';
+    case CheckBoxes = 'checkBoxes';
 
     public static function matchFromCraftField($fieldValue): ?self
     {
         return match (true) {
-            $fieldValue instanceof \craft\elements\db\MatrixBlockQuery => FieldType::MatrixBlock,
+            $fieldValue instanceof \craft\fields\Entries => FieldType::Entries,
+            $fieldValue instanceof \craft\fields\Matrix => FieldType::MatrixBlock,
+            $fieldValue instanceof \craft\fields\Assets => FieldType::Assets,
             $fieldValue instanceof \craft\fields\data\ColorData => FieldType::Color,
-            is_string($fieldValue) => FieldType::PlainText,
-            default => null,
-        };
-    }
-
-    public static function formatFieldValue($fieldValue)
-    {
-        return match (self::matchFromCraftField($fieldValue)) {
-            FieldType::PlainText => $fieldValue,
-            FieldType::Color => $fieldValue->getHex(),
-            default => $fieldValue
+            $fieldValue instanceof \craft\fields\Number=> FieldType::Int,
+            $fieldValue instanceof \craft\fields\PlainText=> FieldType::PlainText,
+            $fieldValue instanceof \craft\fields\LightSwitch=> FieldType::LightSwitch,
+            $fieldValue instanceof \craft\fields\CheckBoxes=> FieldType::CheckBoxes,
+            default => FieldType::UnKnown,
         };
     }
 
@@ -35,6 +37,4 @@ enum FieldType: string
 
         return null;
     }
-
-
 }
