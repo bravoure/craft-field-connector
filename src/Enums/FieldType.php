@@ -6,6 +6,7 @@ namespace CraftFieldConnector\Enums;
 enum FieldType: string
 {
     case Assets = 'assets';
+    case Blurhash = 'blurhash';
     case Categories = 'categories';
     case Checkboxes = 'checkboxes';
     case Color = 'color';
@@ -40,6 +41,7 @@ enum FieldType: string
     {
         return match (true) {
             $field instanceof \craft\fields\Assets => FieldType::Assets,
+            $field instanceof \modules\lucasmodule\fields\BlurhashField => FieldType::Blurhash,
             $field instanceof \craft\fields\Categories => FieldType::Categories,
             $field instanceof \craft\fields\Checkboxes => FieldType::Checkboxes,
             $field instanceof \craft\fields\Color => FieldType::Color,
