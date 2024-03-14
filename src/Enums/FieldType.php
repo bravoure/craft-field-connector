@@ -19,7 +19,6 @@ enum FieldType: string
     case LightSwitch = 'lightSwitch';
     case Matrix = 'matrix';
     case Map = 'map';
-    case MissingField = 'missingField';
     case Money = 'money';
     case MultiSelect = 'multiSelect';
     case Number = 'number';
