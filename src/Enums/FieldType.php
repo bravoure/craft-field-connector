@@ -19,6 +19,7 @@ enum FieldType: string
     case LightSwitch = 'lightSwitch';
     case Matrix = 'matrix';
     case Map = 'map';
+    case MissingField = 'missingField';
     case Money = 'money';
     case MultiSelect = 'multiSelect';
     case Number = 'number';
@@ -30,6 +31,10 @@ enum FieldType: string
     case Table = 'table';
     case Tags = 'tags';
     case Time = 'time';
+    case UiLineBreak = 'uiLineBreak';
+    case UiTemplate = 'uiTemplate';
+    case UiTip = 'uiTip';
+    case UiWarning = 'uiWarning';
     case Url = 'url';
     case Users = 'users';
 
@@ -64,6 +69,10 @@ enum FieldType: string
             $field instanceof \craft\fields\Table => FieldType::Table,
             $field instanceof \craft\fields\Tags => FieldType::Tags,
             $field instanceof \craft\fields\Time => FieldType::Time,
+            $field instanceof \carlcs\uielementfields\fields\UiLineBreak => FieldType::UiLineBreak,
+            $field instanceof \carlcs\uielementfields\fields\UiTemplate => FieldType::UiTemplate,
+            $field instanceof \carlcs\uielementfields\fields\UiTip => FieldType::UiTip,
+            $field instanceof \carlcs\uielementfields\fields\UiWarning => FieldType::UiWarning,
             $field instanceof \craft\fields\Url => FieldType::Url,
             $field instanceof \craft\fields\Users => FieldType::Users,
             default => throw new \Exception("No enum found for $field"),
