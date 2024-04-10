@@ -42,7 +42,7 @@ enum FieldType: string
     {
         return match (true) {
             $field instanceof \craft\fields\Assets => FieldType::Assets,
-            $field instanceof \modules\lucasmodule\fields\BlurhashField => FieldType::Blurhash,
+            $field instanceof \modules\lucymodule\fields\BlurhashField => FieldType::Blurhash,
             $field instanceof \craft\fields\Categories => FieldType::Categories,
             $field instanceof \craft\fields\Checkboxes => FieldType::Checkboxes,
             $field instanceof \craft\ckeditor\Field => FieldType::Ckeditor,
