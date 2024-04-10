@@ -9,6 +9,7 @@ enum FieldType: string
     case Blurhash = 'blurhash';
     case Categories = 'categories';
     case Checkboxes = 'checkboxes';
+    case Ckeditor = 'ckeditor';
     case Color = 'color';
     case Country = 'country';
     case Date = 'date';
@@ -40,9 +41,10 @@ enum FieldType: string
     {
         return match (true) {
             $field instanceof \craft\fields\Assets => FieldType::Assets,
-            $field instanceof \modules\lucasmodule\fields\BlurhashField => FieldType::Blurhash,
+            $field instanceof \modules\lucymodule\fields\BlurhashField => FieldType::Blurhash,
             $field instanceof \craft\fields\Categories => FieldType::Categories,
             $field instanceof \craft\fields\Checkboxes => FieldType::Checkboxes,
+            $field instanceof \craft\ckeditor\Field => FieldType::Ckeditor,
             $field instanceof \craft\fields\Color => FieldType::Color,
             $field instanceof \craft\fields\Country => FieldType::Country,
             $field instanceof \craft\fields\Date => FieldType::Date,
