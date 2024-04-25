@@ -82,4 +82,28 @@ enum FieldType: string
 
         return null;
     }
+
+    public static function isTextField(string $fieldType): bool
+    {
+        return in_array(
+            self::fromType($fieldType), [
+            FieldType::Ckeditor,
+            FieldType::Email,
+            FieldType::Number,
+            FieldType::PlainText,
+            FieldType::Redactor,
+            FieldType::Table,
+            FieldType::Url
+        ]);
+    }
+
+    public static function isIterable(string $fieldType): bool
+    {
+        return in_array(
+            self::fromType($fieldType), [
+            FieldType::Matrix,
+            FieldType::SuperTable,
+            FieldType::Entries
+        ]);
+    }
 }
