@@ -17,8 +17,7 @@ enum FieldType: string
     case Email = 'email';
     case Embed = 'embed';
     case Entries = 'entries';
-    case Lightswitch = 'lightswitch';
-    case Link = 'link';
+    case LightSwitch = 'lightSwitch';
     case Matrix = 'matrix';
     case Map = 'map';
     case Money = 'money';
@@ -32,6 +31,7 @@ enum FieldType: string
     case Table = 'table';
     case Tags = 'tags';
     case Time = 'time';
+    case Url = 'url';
     case Users = 'users';
 
     /**
@@ -52,8 +52,7 @@ enum FieldType: string
             $field instanceof \craft\fields\Email => FieldType::Email,
             $field instanceof \modules\embedsmodule\fields\Embed => FieldType::Embed,
             $field instanceof \craft\fields\Entries => FieldType::Entries,
-            $field instanceof \craft\fields\Lightswitch => FieldType::Lightswitch,
-            $field instanceof \craft\fields\Link => FieldType::Link,
+            $field instanceof \craft\fields\LightSwitch => FieldType::LightSwitch,
             $field instanceof \craft\fields\Matrix => FieldType::Matrix,
             $field instanceof \ether\simplemap\fields\MapField => FieldType::Map,
             $field instanceof \craft\fields\Money => FieldType::Money,
@@ -67,6 +66,7 @@ enum FieldType: string
             $field instanceof \craft\fields\Table => FieldType::Table,
             $field instanceof \craft\fields\Tags => FieldType::Tags,
             $field instanceof \craft\fields\Time => FieldType::Time,
+            $field instanceof \craft\fields\Url => FieldType::Url,
             $field instanceof \craft\fields\Users => FieldType::Users,
             default => throw new \Exception("No enum found for $field"),
         };
