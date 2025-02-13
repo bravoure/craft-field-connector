@@ -1,0 +1,151 @@
+name: Update PR Description
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, ready_for_review]
+
+jobs:
+  update-description:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies
+        run: |
+          npm install axios
+
+      - name: Get PR information
+        id: pr-info
+        uses: actions/github-script@v6
+        with:
+          script: |
+            // Get commits
+            const commits = await github.rest.pulls.listCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+
+            // Get changed files
+            const files = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+
+            // Format commit messages
+            const commitMessages = commits.data.map(commit => commit.commit.message).join('\n');
+
+            // Format file changes
+            const fileChanges = files.data.map(file => ({
+              filename: file.filename,
+              status: file.status,
+              additions: file.additions,
+              deletions: file.deletions
+            }));
+
+            // Create context object
+            const prContext = {
+              commits: commitMessages,
+              files: fileChanges,
+              totalFiles: files.data.length,
+              totalAdditions: files.data.reduce((sum, file) => sum + file.additions, 0),
+              totalDeletions: files.data.reduce((sum, file) => sum + file.deletions, 0)
+            };
+
+            core.setOutput('pr-context', JSON.stringify(prContext));
+
+      - name: Generate AI Summary
+        id: ai-summary
+        uses: actions/github-script@v6
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PR_CONTEXT: ${{ steps.pr-info.outputs.pr-context }}
+        with:
+          script: |
+            const axios = require('axios');
+
+            const prContext = JSON.parse(process.env.PR_CONTEXT);
+            if (!prContext) {
+              core.setFailed('No PR context found');
+              return;
+            }
+
+            if (!process.env.OPENAI_API_KEY) {
+              core.setFailed('OPENAI_API_KEY is not set');
+              return;
+            }
+
+            try {
+              const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+                model: "gpt-4",
+                messages: [{
+                  role: "system",
+                  content: "You are a technical writer creating pull request descriptions. Analyze both the commits and file changes to create a comprehensive summary. Include:\n\n" +
+                          "1. A brief overview paragraph explaining the main purpose of the PR\n" +
+                          "2. A 'Key Changes' section with 3-5 bullet points of the most important changes. For each change:\n" +
+                          "   - Link to the file using markdown: `[filename](./filename)`\n" +
+                          "   - Explain what changed and why\n" +
+                          "3. A 'Technical Details' section describing implementation details and architectural changes, with links to relevant files\n" +
+                          "4. A 'Changes Overview' section with stats about files changed, additions, and deletions\n\n" +
+                          "Format the response in markdown with appropriate headings (##). Be concise but informative. When mentioning specific files, always create links to them."
+                }, {
+                  role: "user",
+                  content: `Please analyze these changes:\n\nCommits:\n${prContext.commits}\n\nFile Changes:\n${JSON.stringify(prContext.files, null, 2)}\n\nStats:\nTotal Files: ${prContext.totalFiles}\nAdditions: ${prContext.totalAdditions}\nDeletions: ${prContext.totalDeletions}`
+                }],
+                temperature: 0.7,
+                max_tokens: 1500
+              }, {
+                headers: {
+                  'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+                  'Content-Type': 'application/json'
+                }
+              });
+
+              const summary = response.data.choices[0].message.content;
+              core.setOutput('summary', summary);
+            } catch (error) {
+              console.error('Error details:', error.response?.data || error.message);
+              core.setFailed(`Error generating summary: ${error.message}`);
+            }
+
+      - name: Update PR Description
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            try {
+              let aiSummary = process.env.AI_SUMMARY;
+
+              if (!aiSummary) {
+                core.warning('No AI summary available');
+                return;
+              }
+
+              // Replace relative links with absolute GitHub links
+              const baseUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/blob/${context.payload.pull_request.head.sha}/`;
+              aiSummary = aiSummary.replace(/\[([^\]]+)\]\(\.\/([^)]+)\)/g, (match, text, path) => {
+                return `[${text}](${baseUrl}${path})`;
+              });
+
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number,
+                body: aiSummary
+              });
+            } catch (error) {
+              console.error('Error updating PR:', error);
+              core.setFailed(`Failed to update PR description: ${error.message}`);
+            }
+        env:
+          AI_SUMMARY: ${{ steps.ai-summary.outputs.summary }}
