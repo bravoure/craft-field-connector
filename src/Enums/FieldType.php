@@ -70,6 +70,7 @@ enum FieldType: string
             $field instanceof \craft\fields\Table => FieldType::Table,
             $field instanceof \craft\fields\Tags => FieldType::Tags,
             $field instanceof \craft\fields\Time => FieldType::Time,
+            $field instanceof \craft\fields\Url => FieldType::Url,
             $field instanceof \craft\fields\Users => FieldType::Users,
             default => throw new \Exception("No enum found for $field"),
         };
