@@ -22,6 +22,8 @@ enum FieldType: string
     case Embed = 'embed';
     case Entries = 'entries';
     case LightSwitch = 'lightSwitch';
+    case Lightswitch = 'lightswitch';
+    case Link = 'link';
     case Matrix = 'matrix';
     case Map = 'map';
     case Money = 'money';
@@ -61,6 +63,8 @@ enum FieldType: string
             $field instanceof \modules\embedsmodule\fields\Embed => FieldType::Embed,
             $field instanceof \craft\fields\Entries => FieldType::Entries,
             $field instanceof \craft\fields\LightSwitch => FieldType::LightSwitch,
+            $field instanceof \craft\fields\Lightswitch => FieldType::Lightswitch,
+            $field instanceof \craft\fields\Link => FieldType::Link,
             $field instanceof \craft\fields\Matrix => FieldType::Matrix,
             $field instanceof \ether\simplemap\fields\MapField => FieldType::Map,
             $field instanceof \craft\fields\Money => FieldType::Money,

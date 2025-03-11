@@ -1,0 +1,19 @@
+{
+  "github": {
+    "release": false
+  },
+  "plugins": {
+    "@release-it/bumper": {
+      "in": "composer.json",
+      "out": "composer.json"
+    }
+  },
+  "git": {
+    "push": false,
+    "tag": false,
+    "requireUpstream": false
+  },
+  "npm": {
+    "publish": false
+  }
+}
