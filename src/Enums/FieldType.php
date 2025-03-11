@@ -2,7 +2,11 @@
 
 namespace CraftFieldConnector\Enums;
 
-
+/**
+ * Represents the various field types available in Craft CMS, each identified by a unique string value.
+ * This enumeration facilitates consistent referencing and management of field types within the system,
+ * providing a type-safe way to handle different kinds of field operations and validations.
+ */
 enum FieldType: string
 {
     case Assets = 'assets';
@@ -37,7 +41,11 @@ enum FieldType: string
     case Users = 'users';
 
     /**
-     * @throws \Exception
+     * Matches a Craft CMS field instance to a corresponding enum case.
+     *
+     * @param mixed $field A Craft CMS field instance to be matched.
+     * @return FieldType|null The corresponding FieldType enum case if a match is found, or null if no match is found.
+     * @throws \Exception if no corresponding enum case is found for the provided field type.
      */
     public static function matchFromCraftField($field): ?self
     {
@@ -76,6 +84,12 @@ enum FieldType: string
         };
     }
 
+    /**
+     * Retrieves the FieldType enum case based on the string value of the field type.
+     *
+     * @param string $value The string identifier of the field type.
+     * @return FieldType|null The corresponding FieldType enum case, or null if no match is found.
+     */
     public static function fromType(string $value): ?FieldType
     {
         foreach (FieldType::cases() as $case) {
@@ -87,6 +101,12 @@ enum FieldType: string
         return null;
     }
 
+    /**
+     * Determines if the specified field type is considered a text field.
+     *
+     * @param string $fieldType The string identifier of the field type to check.
+     * @return bool True if the field type is a text field, false otherwise.
+     */
     public static function isTextField(string $fieldType): bool
     {
         return in_array(
@@ -101,6 +121,12 @@ enum FieldType: string
         ]);
     }
 
+    /**
+     * Determines if the specified field type supports iterable operations.
+     *
+     * @param string $fieldType The string identifier of the field type to check.
+     * @return bool True if the field type is iterable, false otherwise.
+     */
     public static function isIterable(string $fieldType): bool
     {
         return in_array(
